@@ -5,6 +5,7 @@
 
 import time, os, re
 import parser
+import db
 
 
 #Set the filename and open the file
@@ -17,6 +18,8 @@ st_results = os.stat(filename)
 st_size = st_results[6]
 file.seek(st_size)
 
+# Open a cursor to the database
+#c = db.connection()
 
 # This reads the file each second, and get the new lines
 # written 
@@ -29,4 +32,6 @@ while 1:
     else:
         # TODO parse the line
         print line, # already has newline
-        parser.parsing_syslog(line)
+        parsed_line = parser.parsing_syslog(line)
+        print parsed_line
+        # Insert the line into the database
