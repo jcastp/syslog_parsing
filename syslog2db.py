@@ -4,6 +4,7 @@
 # insert them into the database
 
 import time, os, re
+import parser
 
 
 #Set the filename and open the file
@@ -28,4 +29,4 @@ while 1:
     else:
         # TODO parse the line
         print line, # already has newline
-
+        parser.parsing_syslog(line)
