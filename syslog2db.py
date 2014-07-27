@@ -19,7 +19,7 @@ st_size = st_results[6]
 file.seek(st_size)
 
 # Open a cursor to the database
-c = db.connection()
+dbconn, c = db.connection()
 
 # This reads the file each second, and get the new lines
 # written 
@@ -32,6 +32,12 @@ while 1:
     else:
         # TODO parse the line
         print line, # already has newline
-        parsed_line = parser.parsing_syslog(line)
+        parsed_line, exception = parser.parsing_syslog(line)
         print parsed_line
         # Insert the line into the database
+        # Check if there is a exception in the parsing
+        if exception is not None:
+            db.insert_exception(c, exception)
+        else:
+            db.insert_syslog(c, parsed_line)
+        dbconn.commit()
