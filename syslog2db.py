@@ -19,7 +19,7 @@ st_size = st_results[6]
 file.seek(st_size)
 
 # Open a cursor to the database
-#c = db.connection()
+c = db.connection()
 
 # This reads the file each second, and get the new lines
 # written 

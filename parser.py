@@ -1,7 +1,6 @@
 import re, time, datetime
 
-pattern = r'(\w{3}\s\d{2}\s\d{2}:\d{2}:\d{2})\s(\w+)\s(\w+/*\w+\[*(\d*)*\]*):\s(.*)'
-
+pattern = r'(\w{3}\s\d{2}\s\d{2}:\d{2}:\d{2})\s(\w+)\s([\/*|\w+]+)\[*(\d+)*\]*:\s(.*)'
 
 def time_convert(date):
     year = time.localtime()[0]
@@ -20,10 +19,11 @@ def parsing_syslog(a_line):
                                                           match.group(3),
                                                           match.group(4),
                                                           match.group(5))
+
     # Convert to the mysql date format
     date = time_convert(date)
     # If there is no process number, we convert it to -1
-    if process_number is '':
+    if process_number is '' or process_number is None:
         process_number = -1
                                                           
     return date, hostname, process, process_number, message
