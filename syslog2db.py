@@ -31,9 +31,7 @@ while 1:
         file.seek(where)
     else:
         # TODO parse the line
-        print line, # already has newline
         parsed_line, exception = parser.parsing_syslog(line)
-        print parsed_line
         # Insert the line into the database
         # Check if there is a exception in the parsing
         if exception is not None:

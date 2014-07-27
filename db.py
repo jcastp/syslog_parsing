@@ -17,23 +17,22 @@ def check_host(dbconn, hostname):
     """
     cursor = dbconn.cursor()
     #Check presence
-    sql_query = """SELECT * FROM hostname
-WHERE hostname = %s"""
+    sql_query = """SELECT * FROM hostname WHERE hostname = %s"""
     cursor.execute(sql_query, (hostname,))
     # If the hostname exists
     results = cursor.fetchone()
     if results is not None:
-        id_number = results[1]
+        id_number = results[0]
     else:
-        sql_insert = """INSERT INTO hostname (hostname)
-VALUES (%s)"""
+        sql_insert = """INSERT INTO hostname (hostname) VALUES (%s)"""
         cursor.execute(sql_insert, (hostname,))
         dbconn.commit()
         cursor.execute(sql_query, (hostname,))
         results = cursor.fetchone()
-        id_number = results[1]
+        id_number = results[0]
         
     cursor.close()
+
     return id_number
 
 
@@ -44,23 +43,22 @@ def check_process(dbconn, process):
     """
     cursor = dbconn.cursor()
     #Check presence
-    sql_query = """SELECT * FROM process
-WHERE process_name = %s"""
+    sql_query = """SELECT * FROM process WHERE process_name = %s"""
     cursor.execute(sql_query, (process,))
     # If the process exists
     results = cursor.fetchone()
     if results is not None:
-        id_number = results[1]
+        id_number = results[0]
     else:
-        sql_insert = """INSERT INTO process (process_name)
-VALUES (%s)"""
+        sql_insert = """INSERT INTO process (process_name) VALUES (%s)"""
         cursor.execute(sql_insert, (process,))
         dbconn.commit()
         cursor.execute(sql_query, (process,))
         results = cursor.fetchone()
-        id_number = results[1]
+        id_number = results[0]
         
     cursor.close()
+
     return id_number
 
 
@@ -71,8 +69,7 @@ def insert_exception(dbconn, exception):
     annalyze later what went wrong.
     """
     cursor = dbconn.cursor()
-    sql_sentence = """INSERT INTO exceptions (data)
-VALUES (%s)"""
+    sql_sentence = """INSERT INTO exceptions (data) VALUES (%s)"""
     cursor.execute(sql_sentence, (exception,))
     dbconn.commit()
     cursor.close()
@@ -86,9 +83,14 @@ def insert_syslog(dbconn, parsed_line):
     cursor = dbconn.cursor()
     date, hostname, process, process_number, message = parsed_line
     # Check if the hostname is already in the database
-    host_number = check_host(dbconn, hostname)
+    host_id = check_host(dbconn, hostname)
     # Check if the process is already in the database
-    process_number = check_process(dbconn, process)
+    proc_id = check_process(dbconn, process)
+
+    sql_insert = """INSERT INTO syslog (date, host_id, proc_id, proc_number, message) VALUES (%s, %s, %s, %s, %s)"""
+
+    cursor.execute(sql_insert, (date, host_id, proc_id, process_number, message))
+    dbconn.commit()
     
     cursor.close()
     return
