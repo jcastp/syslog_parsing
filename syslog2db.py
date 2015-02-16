@@ -1,41 +1,67 @@
-# Program to read the syslog line by line, as it is updated
-# and extract all the information to insert it into a database
-# We have to parse the syslog and the auditd messages, to
-# insert them into the database
+#!/usr/bin/python3
+
+# Syslog receiver that parses the input and inserts the fields into a
+# database 
 
 import time, os, re
-import parser
-import db
+import socket
+from parser import *
+#import db
 
 
-#Set the filename and open the file
-filename = '/var/log/syslog'
-file = open(filename,'r')
+# We set a socket to listen to the syslog
+serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+serversocket.bind(('localhost', 1514))
+serversocket.listen(5)
 
 
-#Find the size of the file and move to the end
-st_results = os.stat(filename)
-st_size = st_results[6]
-file.seek(st_size)
+# Read what is sento to the syslog
+while True:
+    # accept connections from outside
+    (clientsocket, address) = serversocket.accept()
+    # now do something with the clientsocket
+    # The socket gets the output of the syslog
+    message = clientsocket.recv(4096)
+# TODO
+    if message:
+#        print(message)
+        # Separate the different lines received
+        text = message.decode("utf-8")
+        print(text)
+        # Identify the syslog received (syslog, auditd, etc)
+        # Parse the line, according the type
+        # Insert into the database
+
+
+    clientsocket.close()
+
+serversocket.close()
+
+
+
+
+
+
+
+
+
+
+
 
 # Open a cursor to the database
-dbconn = db.connection()
+#dbconn = db.connection()
 
 # This reads the file each second, and get the new lines
 # written 
-while 1:
-    where = file.tell()
-    line = file.readline()
-    if not line:
-        time.sleep(1)
-        file.seek(where)
-    else:
+#while 1:
+
         # TODO parse the line
-        parsed_line, exception = parser.parsing_syslog(line)
+#        parsed_line, exception = parser.parsing_syslog(line)
         # Insert the line into the database
         # Check if there is a exception in the parsing
-        if exception is not None:
-            db.insert_exception(dbconn, exception)
-        else:
-            db.insert_syslog(dbconn, parsed_line)
+#        if exception is not None:
+#            db.insert_exception(dbconn, exception)
+#        else:
+#            db.insert_syslog(dbconn, parsed_line)
 
