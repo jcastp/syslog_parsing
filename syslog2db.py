@@ -4,39 +4,47 @@
 # database 
 
 import time, os, re
-import socket
+import socketserver
 from parser import *
-#import db
+import db
+from syssocket import *
 
+
+
+HOST='localhost'
+PORT=1514
 
 # We set a socket to listen to the syslog
-serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-serversocket.bind(('localhost', 1514))
-serversocket.listen(5)
+socketserver.TCPServer.allow_reuse_address = True
+server = socketserver.TCPServer((HOST, PORT), syslogsocket.MyTCPHandler)
+
+server.serve_forever()
+
+
+
 
 
 # Read what is sento to the syslog
-while True:
+#while True:
     # accept connections from outside
-    (clientsocket, address) = serversocket.accept()
+#    (clientsocket, address) = serversocket.accept()
     # now do something with the clientsocket
     # The socket gets the output of the syslog
-    message = clientsocket.recv(4096)
+#    message = clientsocket.recv(4096)
 # TODO
-    if message:
+#    if message:
 #        print(message)
         # Separate the different lines received
-        text = message.decode("utf-8")
-        print(text)
+#        text = message.decode("utf-8")
+#        print(text)
         # Identify the syslog received (syslog, auditd, etc)
         # Parse the line, according the type
         # Insert into the database
 
 
-    clientsocket.close()
+#    clientsocket.close()
 
-serversocket.close()
+#serversocket.close()
 
 
 
@@ -64,4 +72,3 @@ serversocket.close()
 #            db.insert_exception(dbconn, exception)
 #        else:
 #            db.insert_syslog(dbconn, parsed_line)
-

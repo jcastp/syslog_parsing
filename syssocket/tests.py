@@ -1,5 +1,5 @@
 import unittest
-import socket
+import syslogsocket
 
 class TestSocket(unittest.TestCase):
 
