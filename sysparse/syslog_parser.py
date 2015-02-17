@@ -1,4 +1,5 @@
-import re, parser
+import re
+import sysparse.libparser
 
 syslog_pattern = r'(\w{3}\s\d{2}\s\d{2}:\d{2}:\d{2})\s(\w+)\s([\/*|\w+|\-*]+)\[*(\d+)*\]*:\s(.*)'
 
@@ -15,7 +16,7 @@ def parsing_syslog(a_line):
                                                           match.group(5))
 
         # Convert to the mysql date format
-        date = parser.time_convert(date)
+        date = sysparse.libparser.time_convert(date)
         # If there is no process number, we convert it to -1
         if process_number is '' or process_number is None:
             process_number = -1

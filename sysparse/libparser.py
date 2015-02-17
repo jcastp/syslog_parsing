@@ -1,6 +1,8 @@
 # Generic functions used by all the parsers
 
 import time, datetime
+import sysparse.syslog_parser
+import sysparse.audit_parser
 
 def time_convert(date):
     year = time.localtime()[0]
@@ -24,5 +26,17 @@ def classify_lines(message):
     """Given a text line, detect what kind of event it is, to classify it."""
     if message.startswith('type'):
         return "audit"
-    elif message # TODO
+    # TODO modify this to ascertain if it is a syslog entry
+    else:
+        return "syslog"
+    return
+
+
+def parse(kind, text):
+    """Once given the type of log received, and the line text, it launches
+    the correct parsing functions"""
+    if kind == "syslog":
+        return sysparse.syslog_parser.parsing_syslog(text)
+    elif kind == "audit":
+        return None
     return

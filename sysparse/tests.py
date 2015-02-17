@@ -20,8 +20,8 @@ class ParserTest(unittest.TestCase):
     def test_classify_lines(self):
         syslog_line = 'Feb 16 17:02:30 hefaistos jcastp: test3'
         audit_line = 'type=DAEMON_END msg=audit(1423656756.999:2346): auditd normal halt, sending auid=4294967295 pid=-1 subj= res=success'
-        self.assertEqual(libparser.classify_line(syslog_line), "syslog")
-        self.assertEqual(libparser.classify_line(audit_line), "audit")
+        self.assertEqual(libparser.classify_lines(syslog_line), "syslog")
+        self.assertEqual(libparser.classify_lines(audit_line), "audit")
         return
 
 

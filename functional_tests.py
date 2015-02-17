@@ -3,15 +3,12 @@
 # File used to store the functional tests of the application
 
 import unittest
-import socket
+import syssocket.syslogsocket
+import socketserver
 
 class func_test(unittest.TestCase):
     
     def setUp(self):
-        self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.serversocket.bind(('localhost', 1514))
-        self.serversocket.listen(5)
         return
 
     def test_socket_listens(self):
@@ -26,7 +23,7 @@ class func_test(unittest.TestCase):
 
 
     def tearDown(self):
-        self.serversocket.close()
+
         return
 
 

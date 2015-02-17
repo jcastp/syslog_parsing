@@ -19,11 +19,12 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         if self.data != "":
             print(self.data)
             # Clean the data received to get a clean line of text
-            sysparse.libparser.clean_message(self.data)
+            text = sysparse.libparser.clean_message(self.data)
             # Check the origin of the line (sylog, audit, etc)
-            
+            kind = (sysparse.libparser.classify_lines(text))
             # Parse it
-            # Ass it to the database
+            print(sysparse.libparser.parse(kind, text))
+            # Add it to the database
 
 
 if __name__ == "__main__":
