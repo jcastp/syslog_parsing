@@ -1,4 +1,5 @@
 import socketserver
+import sysparse.libparser
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -10,10 +11,20 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
+        """This is the main function of the application, and this
+        is where the data is going to be processed
+        """
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024).strip()
         if self.data != "":
             print(self.data)
+            # Clean the data received to get a clean line of text
+            sysparse.libparser.clean_message(self.data)
+            # Check the origin of the line (sylog, audit, etc)
+            
+            # Parse it
+            # Ass it to the database
+
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 1514
