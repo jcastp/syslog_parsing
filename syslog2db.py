@@ -6,6 +6,7 @@
 import time, os, re
 import socketserver
 import syssocket.syslogsocket
+import sysdb.dbfunctions
 
 
 def main(): 
@@ -15,12 +16,13 @@ def main():
     
     # We set a socket to listen to the syslog
     socketserver.TCPServer.allow_reuse_address = True
-    server = syssocket.syslogsocket.MyTCPServer((HOST, PORT), syssocket.syslogsocket.MyTCPHandler)
-
-    # Check database connection and tables
-    server.db_connection()
-    server.check_tables()
+    server = socketserver.TCPServer((HOST, PORT), syssocket.syslogsocket.MyTCPHandler)
     
+    # Create a connection against the database
+    engine = sysdb.dbfunctions.create_db_connection()
+    sysdb.dbfunctions.check_or_create_tables(engine, sysdb.dbfunctions.Base)
+    # Using this trick to pass the connection to the handler
+    server.engine = engine
 
     server.serve_forever()
 

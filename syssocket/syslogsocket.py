@@ -3,15 +3,6 @@ import sysparse.libparser
 import sysdb.dbfunctions
 
 
-class MyTCPServer(socketserver.TCPServer):
-    def db_connection(self):
-        self.engine = sysdb.dbfunctions.create_db_connection()
-        return
-
-    def check_tables(self):
-        sysdb.dbfunctions.check_or_create_tables(self.engine)
-        return
-
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -21,6 +12,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     override the handle() method to implement communication to the
     client.
     """
+
 
 
     def handle(self):
@@ -39,5 +31,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             data, exception = sysparse.libparser.parse(kind, text)
             # Add it to the database
             print(data)
+            sysdb.dbfunctions.insert_data(self.server.engine, data)
+
             
             
