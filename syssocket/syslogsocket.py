@@ -1,5 +1,17 @@
 import socketserver
 import sysparse.libparser
+import sysdb.dbfunctions
+
+
+class MyTCPServer(socketserver.TCPServer):
+    def db_connection(self):
+        self.engine = sysdb.dbfunctions.create_db_connection()
+        return
+
+    def check_tables(self):
+        sysdb.dbfunctions.check_or_create_tables(self.engine)
+        return
+
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -9,6 +21,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     override the handle() method to implement communication to the
     client.
     """
+
 
     def handle(self):
         """This is the main function of the application, and this
@@ -23,18 +36,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             # Check the origin of the line (sylog, audit, etc)
             kind = (sysparse.libparser.classify_lines(text))
             # Parse it
-            print(sysparse.libparser.parse(kind, text))
+            data, exception = sysparse.libparser.parse(kind, text)
             # Add it to the database
-
-
-if __name__ == "__main__":
-    HOST, PORT = "localhost", 1514
-
-    # Create the server, binding to localhost on port 9999
-    socketserver.TCPServer.allow_reuse_address = True
-    server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-
-
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
-    server.serve_forever()
+            print(data)
+            
+            
