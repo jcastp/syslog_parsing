@@ -40,7 +40,8 @@ class Log(Base):
 
 
 def create_db_connection():
-    engine = sqlalchemy.create_engine('mysql+pymysql://syslogdb:Sysl0gdb@localhost/syslog', echo = True)
+    engine = sqlalchemy.create_engine('mysql+pymysql://syslogdb:Sysl0gdb@localhost/syslog',
+                                      echo = False)
     return engine
 
 
